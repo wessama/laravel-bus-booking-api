@@ -43,7 +43,7 @@ class SeatController extends Controller
         $endOrder = TripStation::intermediaryTrip($endStationId, $tripId)->first()?->order;
 
         return Seat::forTrip($tripId)
-            ->availableBetweenOrders($startOrder, $endOrder)
+            ->availableBetweenTripSegments($startOrder, $endOrder)
             ->get();
     }
 }

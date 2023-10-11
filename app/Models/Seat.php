@@ -19,7 +19,7 @@ class Seat extends BaseModel
         });
     }
 
-    public function scopeAvailableBetweenOrders($query, $startOrder, $endOrder)
+    public function scopeAvailableBetweenTripSegments($query, $startOrder, $endOrder)
     {
         return $query->whereDoesntHave('bookings', function ($query) use ($startOrder, $endOrder) {
             $query->whereHas('seat.bus.trip', function($tripQuery) use ($startOrder, $endOrder) {
