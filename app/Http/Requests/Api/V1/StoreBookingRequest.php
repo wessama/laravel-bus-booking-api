@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use App\Rules\SeatIsAvailable;
 use App\Rules\ValidSeatForTrip;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,8 @@ class StoreBookingRequest extends FormRequest
             'seat_id' => [
                 'required',
                 'exists:seats,id',
-                new ValidSeatForTrip($this->input('start_station'), $this->input('end_station'))
+                new ValidSeatForTrip($this->input('start_station'), $this->input('end_station')),
+                new SeatIsAvailable($this->input('start_station'), $this->input('end_station')),
             ],
             'start_station' => 'required|exists:stations,id',
             'end_station' => 'required|exists:stations,id'
