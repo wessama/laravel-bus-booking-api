@@ -17,10 +17,7 @@ class SeatSeeder extends Seeder
         $buses = Bus::all();
         foreach ($buses as $bus) {
             for ($seatNumber = 1; $seatNumber <= Bus::SEATS_PER_BUS; $seatNumber++) {
-                Seat::factory()->create([
-                    'bus_id' => $bus->id,
-                    'seat_number' => $seatNumber
-                ]);
+                Seat::factory()->withBus($bus, $seatNumber)->create();
             }
         }
     }

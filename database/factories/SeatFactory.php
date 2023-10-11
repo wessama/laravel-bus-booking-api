@@ -16,8 +16,17 @@ class SeatFactory extends Factory
     public function definition(): array
     {
         return [
-            'bus_id' => Bus::factory(),
-            'seat_number' => $this->faker->unique()->numberBetween(1, 12),
+            //
         ];
+    }
+
+    public function withBus(Bus $bus, int $seatNumber): SeatFactory|Factory
+    {
+        return $this->state(function () use ($bus, $seatNumber) {
+            return [
+                'bus_id' => $bus->id,
+                'seat_number' => $seatNumber,
+            ];
+        });
     }
 }
