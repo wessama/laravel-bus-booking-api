@@ -22,6 +22,7 @@ class SeatController extends Controller
         $trips = TripStation::tripsBetweenStations($startStation, $endStation)->get();
         foreach ($trips as $trip) {
             $availableSeats = $this->getAvailableSeats($startStation, $endStation, $trip);
+
             if ($availableSeats->isNotEmpty()) {
                 return response()->json([
                     'available_seats' => $availableSeats,
@@ -44,5 +45,4 @@ class SeatController extends Controller
             ->availableBetweenOrders($startOrder, $endOrder)
             ->get();
     }
-
 }
