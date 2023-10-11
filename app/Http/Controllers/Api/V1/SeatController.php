@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Traits\ChecksForAvailableSeats;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CheckAvailableSeatsRequest;
+use App\Http\Resources\SeatResource;
 use App\Models\Booking;
 use App\Models\Seat;
 use App\Models\Trip;
@@ -30,7 +31,7 @@ class SeatController extends Controller
 
             if ($availableSeats->isNotEmpty()) {
                 return response()->json([
-                    'available_seats' => $availableSeats,
+                    'available_seats' => SeatResource::collection($availableSeats),
                     'trip_id' => $tripSegment->trip_id,
                 ], Response::HTTP_OK);
             }

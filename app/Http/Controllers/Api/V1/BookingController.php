@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreBookingRequest;
+use App\Http\Resources\BookingResource;
 use App\Models\Booking;
 use App\Models\Seat;
 use App\Models\Trip;
@@ -45,10 +46,7 @@ class BookingController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return response()->json([
-            'message' => 'Booking successful!',
-            'booking' => $booking
-        ], Response::HTTP_CREATED);
+        return new BookingResource($booking);
     }
 }
 
