@@ -34,7 +34,6 @@ class ValidSeatForTrip implements ValidationRule
 
         $startOrder = TripStation::where('trip_id', $seat->bus->trip_id)
             ->where('station_id', $this->startStation)->first()?->order;
-
         $endOrder = TripStation::where('trip_id', $seat->bus->trip_id)
             ->where('station_id', $this->endStation)->first()?->order;
 
