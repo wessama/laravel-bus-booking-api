@@ -33,8 +33,7 @@ class SeatController extends Controller
 
             if ($availableSeats->isNotEmpty()) {
                 return response()->json([
-                    'available_seats' => SeatResource::collection($availableSeats),
-                    'trip_id' => $tripSegment->trip_id,
+                    'data' => SeatResource::collection($availableSeats),
                 ], Response::HTTP_OK);
             }
         }
