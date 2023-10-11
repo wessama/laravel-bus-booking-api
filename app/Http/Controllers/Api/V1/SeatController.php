@@ -25,7 +25,9 @@ class SeatController extends Controller
         $startStation = $request->input('start_station');
         $endStation = $request->input('end_station');
 
-        $tripStations = TripStation::tripSegments($startStation, $endStation)->get();
+        $tripStations = TripStation::with('trip')
+            ->tripSegments($startStation, $endStation)->get();
+
         foreach ($tripStations as $tripSegment) {
             $availableSeats = $this->getAvailableSeats($startStation, $endStation, $tripSegment->trip_id);
 
