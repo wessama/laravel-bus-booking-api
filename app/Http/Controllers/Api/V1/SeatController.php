@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Api\V1\Traits\ChecksForAvailableSeats;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\CheckAvailableSeatsRequest;
 use App\Models\Booking;
 use App\Models\Seat;
 use App\Models\Trip;
@@ -15,7 +17,9 @@ use Illuminate\Support\Facades\DB;
 
 class SeatController extends Controller
 {
-    public function available(Request $request): JsonResponse
+    use ChecksForAvailableSeats;
+
+    public function available(CheckAvailableSeatsRequest $request): JsonResponse
     {
         $startStation = $request->input('start_station');
         $endStation = $request->input('end_station');
@@ -35,15 +39,5 @@ class SeatController extends Controller
         return response()->json([
             'error' => 'No available seats'
         ], Response::HTTP_NOT_FOUND);
-    }
-
-    private function getAvailableSeats($startStationId, $endStationId, $tripId): Collection
-    {
-        $startOrder = TripStation::intermediaryTrip($startStationId, $tripId)->first()?->order;
-        $endOrder = TripStation::intermediaryTrip($endStationId, $tripId)->first()?->order;
-
-        return Seat::forTrip($tripId)
-            ->availableBetweenTripSegments($startOrder, $endOrder)
-            ->get();
     }
 }
