@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\StoreBookingRequest;
 use App\Models\Booking;
 use App\Models\Seat;
 use App\Models\Trip;
@@ -16,43 +17,10 @@ use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreBookingRequest $request)
     {
         $validatedData = $request->validated();
 
-        $seat = Seat::with('bus.trip')->findOrFail($validatedData['seat_id']);
-        if (! $this->isValidSeatForTrip($seat, $validatedData)) {
-            return response()->json([
-                'error' => 'Invalid stations for the chosen seat.'
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        $booking = $this->placeBooking($validatedData);
-
-        return response()->json([
-            'message' => 'Booking successful!',
-            'booking' => $booking
-        ], Response::HTTP_CREATED);
-    }
-
-    protected function isValidSeatForTrip(Seat $seat, array $validatedData): bool
-    {
-        $trip = $seat->bus?->trip;
-        // Early return if the seat is not assigned to a trip
-        if (! $trip) {
-            return false;
-        }
-
-        $startOrder = TripStation::where('trip_id', $trip->id)
-            ->where('station_id', $validatedData['start_station'])->first()?->order;
-        $endOrder = TripStation::where('trip_id', $trip->id)
-            ->where('station_id', $validatedData['end_station'])->first()?->order;
-
-        return $startOrder && $endOrder && $startOrder < $endOrder;
-    }
-
-    private function placeBooking(array $validatedData): bool
-    {
         try {
             DB::beginTransaction();
 
@@ -71,9 +39,16 @@ class BookingController extends Controller
                 'exception' => $e,
                 'booking' => $validatedData,
             ]);
+
+            return response()->json([
+                'message' => 'An error occurred while placing a Booking.',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $booking ?? false;
+        return response()->json([
+            'message' => 'Booking successful!',
+            'booking' => $booking
+        ], Response::HTTP_CREATED);
     }
 }
 
