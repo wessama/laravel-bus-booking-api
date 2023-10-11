@@ -10,6 +10,8 @@ class Bus extends BaseModel
 {
     use HasFactory;
 
+    public const SEATS_PER_BUS = 12;
+
     public function trip(): BelongsTo
     {
         return $this->belongsTo(Trip::class);

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Bus;
+use App\Models\Trip;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class BusFactory extends Factory
     public function definition(): array
     {
         return [
-            'trip_id' => \App\Models\Trip::factory(),
+            'trip_id' => Trip::factory(),
         ];
     }
 }

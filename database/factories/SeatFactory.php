@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Bus;
 use App\Models\Seat;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,7 +16,7 @@ class SeatFactory extends Factory
     public function definition(): array
     {
         return [
-            'bus_id' => \App\Models\Bus::factory(),
+            'bus_id' => Bus::factory(),
             'seat_number' => $this->faker->unique()->numberBetween(1, 12),
         ];
     }
