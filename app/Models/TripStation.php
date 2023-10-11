@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class TripStation extends BaseModel
 {
-    public function scopeTripsBetweenStations(Builder $query, $startStationId, $endStationId): Builder
+    public function scopeTripSegments(Builder $query, $startStationId, $endStationId): Builder
     {
         return $query->from('trip_stations as start_station')
             ->join('trip_stations as end_station', function($join) {
