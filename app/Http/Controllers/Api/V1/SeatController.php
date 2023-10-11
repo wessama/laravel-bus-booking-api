@@ -35,28 +35,14 @@ class SeatController extends Controller
         ], Response::HTTP_NOT_FOUND);
     }
 
-    private function getAvailableSeats(int $startStationId, int $endStationId, int $tripId): Collection
+    private function getAvailableSeats($startStationId, $endStationId, $tripId): Collection
     {
         $startOrder = TripStation::intermediaryTrip($startStationId, $tripId)->first()?->order;
         $endOrder = TripStation::intermediaryTrip($endStationId, $tripId)->first()?->order;
 
-        // Retrieve seats that are not booked in the specified order range
-        return Seat::whereHas('bus', function ($query) use ($tripId) {
-            $query->where('trip_id', $tripId);
-        })->whereDoesntHave('bookings', function ($query) use ($tripId, $startOrder, $endOrder) {
-            $query->whereExists(function ($query) use ($tripId, $startOrder, $endOrder) {
-                $query->select(DB::raw(1))
-                    ->from('trip_stations')
-                    ->whereColumn('start_station_id', 'trip_stations.station_id')
-                    ->where('trip_id', $tripId)
-                    ->whereBetween('order', [$startOrder, $endOrder]);
-            })->orWhereExists(function ($query) use ($tripId, $startOrder, $endOrder) {
-                $query->select(DB::raw(1))
-                    ->from('trip_stations')
-                    ->whereColumn('end_station_id', 'trip_stations.station_id')
-                    ->where('trip_id', $tripId)
-                    ->whereBetween('order', [$startOrder, $endOrder]);
-            });
-        })->get();
+        return Seat::forTrip($tripId)
+            ->availableBetweenOrders($startOrder, $endOrder)
+            ->get();
     }
+
 }
