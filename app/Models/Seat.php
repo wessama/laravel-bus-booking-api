@@ -22,16 +22,14 @@ class Seat extends BaseModel
     public function scopeAvailableBetweenOrders($query, $startOrder, $endOrder)
     {
         return $query->whereDoesntHave('bookings', function ($query) use ($startOrder, $endOrder) {
-            $query->whereExists(function ($query) use ($startOrder, $endOrder) {
-                $query->select(DB::raw(1))
-                    ->from('trip_stations')
-                    ->whereColumn('start_station_id', 'trip_stations.station_id')
-                    ->whereBetween('order', [$startOrder, $endOrder]);
-            })->orWhereExists(function ($query) use ($startOrder, $endOrder) {
-                $query->select(DB::raw(1))
-                    ->from('trip_stations')
-                    ->whereColumn('end_station_id', 'trip_stations.station_id')
-                    ->whereBetween('order', [$startOrder, $endOrder]);
+            $query->whereHas('seat.bus.trip', function($tripQuery) use ($startOrder, $endOrder) {
+                $tripQuery->whereHas('tripStations', function ($innerQuery) use ($endOrder) {
+                    $innerQuery->where('order', '<', $endOrder)
+                        ->whereColumn('trip_stations.station_id', 'bookings.start_station_id');
+                })->whereHas('tripStations', function ($innerQuery) use ($startOrder) {
+                    $innerQuery->where('order', '>', $startOrder)
+                        ->whereColumn('trip_stations.station_id', 'bookings.end_station_id');
+                });
             });
         });
     }
