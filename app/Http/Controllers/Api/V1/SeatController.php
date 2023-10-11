@@ -37,39 +37,26 @@ class SeatController extends Controller
 
     private function getAvailableSeats(int $startStationId, int $endStationId, int $tripId): Collection
     {
-        $availableSeats = [];
-
         $startOrder = TripStation::intermediaryTrip($startStationId, $tripId)->first()?->order;
         $endOrder = TripStation::intermediaryTrip($endStationId, $tripId)->first()?->order;
 
-        // Retrieve all seats associated with the trip
-        $seats = Seat::whereHas('bus', function ($query) use ($tripId) {
+        // Retrieve seats that are not booked in the specified order range
+        return Seat::whereHas('bus', function ($query) use ($tripId) {
             $query->where('trip_id', $tripId);
+        })->whereDoesntHave('bookings', function ($query) use ($tripId, $startOrder, $endOrder) {
+            $query->whereExists(function ($query) use ($tripId, $startOrder, $endOrder) {
+                $query->select(DB::raw(1))
+                    ->from('trip_stations')
+                    ->whereColumn('start_station_id', 'trip_stations.station_id')
+                    ->where('trip_id', $tripId)
+                    ->whereBetween('order', [$startOrder, $endOrder]);
+            })->orWhereExists(function ($query) use ($tripId, $startOrder, $endOrder) {
+                $query->select(DB::raw(1))
+                    ->from('trip_stations')
+                    ->whereColumn('end_station_id', 'trip_stations.station_id')
+                    ->where('trip_id', $tripId)
+                    ->whereBetween('order', [$startOrder, $endOrder]);
+            });
         })->get();
-
-        foreach ($seats as $seat) {
-            $isAvailable = true;
-
-            // Retrieve all bookings associated with each seat
-            $bookings = Booking::where('seat_id', $seat->id)->get();
-
-            foreach ($bookings as $booking) {
-                // Get order of booked stations
-                $bookedStartOrder = TripStation::intermediaryTrip($booking->start_station_id, $tripId)->first()?->order;
-                $bookedEndOrder = TripStation::intermediaryTrip($booking->end_station_id, $tripId)->first()?->order;
-
-                // Check if there is any overlapping booking
-                if (! ($bookedEndOrder <= $startOrder || $bookedStartOrder >= $endOrder)) {
-                    $isAvailable = false;
-                    break;
-                }
-            }
-
-            if ($isAvailable) {
-                $availableSeats[] = $seat->id;
-            }
-        }
-
-        return collect($availableSeats);
     }
 }
