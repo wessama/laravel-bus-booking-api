@@ -15,6 +15,7 @@ trait ChecksForAvailableSeats
 
         return Seat::forTrip($tripId)
             ->availableBetweenTripSegments($startOrder, $endOrder)
+            ->with(['bus', 'bus.trip']) // For HTTP resource
             ->get();
     }
 }
