@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Bus;
 use App\Models\Station;
 use App\Models\Trip;
 use App\Models\TripStation;
@@ -25,6 +26,11 @@ class TripSeeder extends Seeder
                     'station_id' => $station_id,
                     'order' => $order + 1,
                 ]);
+            }
+
+            $bus = Bus::all()->random(1)->first();
+            if ($bus->doesntHave('trip')) {
+                $bus->trip()->associate($trip)->save();
             }
         });
     }

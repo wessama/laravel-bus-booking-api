@@ -16,7 +16,7 @@ class BusFactory extends Factory
     public function definition(): array
     {
         return [
-            'trip_id' => Trip::factory(),
+            // 'trip_id' => Trip::factory(),
         ];
     }
 }
