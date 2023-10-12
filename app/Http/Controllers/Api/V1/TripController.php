@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TripResource;
 use App\Models\Trip;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class TripController extends Controller
 {
@@ -12,6 +14,8 @@ class TripController extends Controller
     {
         $trips = Trip::with(['tripStations.station'])->get();
 
-        return response()->json($trips);
+        return response()->json([
+            'data' => TripResource::collection($trips),
+        ], Response::HTTP_OK);
     }
 }
