@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class TripStation extends BaseModel
 {
+    use HasFactory;
+
     public function scopeTripSegments(Builder $query, $startStationId, $endStationId): Builder
     {
         return $query->from('trip_stations as start_station')

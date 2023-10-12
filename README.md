@@ -1,66 +1,93 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Overview
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Bus booking API built using Laravel 10. This API is built for the purposes of a technical assessment.
 
-## About Laravel
+The repository is built for the code to be easily assessed, the assumption is that this is a project
+with certain milestones, for each milestone, there would usually be multiple tickets. Each branch is 
+intended to act as a ticket deliverable, and should demonstrate best practices such as atomic commits 
+and proper feature blending.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+For example:
+- `wa-[ticket-number]-[ticket-description]` - where `wa` stands for my initials, and `ticket-number` is the ticket number (but in the absence of one then I just used the description)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Each branch will have a corresponding PR that you can review for code changes done at that point during development progress.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+For code styling and ensuring consistency across the codebase, [Laravel Pint](https://laravelshift.com/) is utilized.
+See [pint.json](pint.json) for the configuration used.
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
+- PHP 8.0
+- Composer
+- MySQL 8.0
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Steps
+1. Clone the repository
+2. Run `composer install`
+3. Create a copy of `.env.example` and rename it to `.env`. Add your database credentials.
+4. `php artisan key:generate` (optional)
+5. `php artisan migrate`
+6. `php artisan db:seed`. Since it was requested to provide a DB dump, you can elect to skip this step.
+7. `php artisan serve` or use your preferred web server. This project was built using Valet.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## API Documentation
 
-## Laravel Sponsors
+To generate API documentation, run `php artisan scribe:generate`. You can then visit `http://localhost/docs` to view the documentation with a "Try it out" button to directly test 
+any of the APIs.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## How it works
 
-### Premium Partners
+The app exposes 2 main APIs:
+- `POST /api/v1/bookings` - to create a booking
+- `POST /api/v1/seats/available` - to get a list of available seats
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Objective and Assumptions
+The main objective of the API is to allow users to book seats on trips between different stations without overlapping bookings. 
+A trip consists of multiple stations ordered by the sequence in which they are visited.
 
-## Contributing
+### Challenge
+The main challenge is to ensure that a seat is available for booking between two specific stations. 
+This becomes complicated because one seat might be booked for a segment of the trip, but it could be available for other segments.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Structure
 
-## Code of Conduct
+#### Trips and Stations:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- A trip has multiple stations in a sequence, defined by the order.
+- Every station in a trip is uniquely identifiable by its order.
 
-## Security Vulnerabilities
+#### Seat Availability:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- A seat is considered available if it is not already booked between the user's desired start and end stations.
+- A seat might be booked for station 1 to station 3, but it could be available for station 4 to station 5.
 
-## License
+#### Overlapping Check:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- For a seat to be available, it should not have an overlapping booking. The overlap is checked by:
+- Existing booking's start station is between the user's start and end station.
+- Existing booking's end station is between the user's start and end station.
+
+Here's the basic pseudocode to describe how this check is performed:
+    
+```
+FUNCTION isBookingOverlapping(booking, trip, startStation, endStation)
+FIND order for startStation in trip (startOrder)
+FIND order for endStation in trip (endOrder)
+FIND order for booking's start station in trip (bookedStartOrder)
+FIND order for booking's end station in trip (bookedEndOrder)
+
+IF bookedEndOrder <= startOrder OR bookedStartOrder >= endOrder
+RETURN false
+ELSE
+RETURN true
+END IF
+END FUNCTION
+```
+
+## Testing
+
+`composer test`
+
+## Credits
+- Wessam Ahmed

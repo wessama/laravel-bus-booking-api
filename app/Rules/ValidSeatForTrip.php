@@ -30,6 +30,7 @@ class ValidSeatForTrip implements ValidationRule
 
         if (! $seat || !$seat->bus || !$seat->bus->trip) {
             $fail('Seat is not valid.');
+            return;
         }
 
         $startOrder = TripStation::where('trip_id', $seat->bus->trip_id)
