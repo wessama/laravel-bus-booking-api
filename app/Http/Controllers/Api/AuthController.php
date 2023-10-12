@@ -7,9 +7,17 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Knuckles\Scribe\Attributes\Authenticated;
+use Knuckles\Scribe\Attributes\Group;
 
+#[Group("Authentication", "APIs for authenticating users")]
 class AuthController extends Controller
 {
+    /**
+     * Login
+     *
+     * This endpoint allows you to obtain a token for an existing user.
+     */
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -29,6 +37,12 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Logout
+     *
+     * This endpoint allows you to invalidate a token.
+     */
+    #[Authenticated]
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

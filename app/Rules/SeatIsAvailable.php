@@ -11,10 +11,10 @@ class SeatIsAvailable implements ValidationRule
 {
     use ChecksForAvailableSeats;
 
-    protected int $startStation;
-    protected int $endStation;
+    protected ?int $startStation;
+    protected ?int $endStation;
 
-    public function __construct($startStation, $endStation)
+    public function __construct(?int $startStation, ?int $endStation)
     {
         $this->startStation = $startStation;
         $this->endStation = $endStation;
