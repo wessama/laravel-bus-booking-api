@@ -15,11 +15,20 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Knuckles\Scribe\Attributes\Authenticated;
+use Knuckles\Scribe\Attributes\Group;
 
+#[Group("Seat Management", "APIs for managing seats")]
 class SeatController extends Controller
 {
     use ChecksForAvailableSeats;
 
+    /**
+     * Get Available Seats
+     *
+     * This endpoint allows you to get all available seats for a trip.
+     */
+    #[Authenticated]
     public function available(CheckAvailableSeatsRequest $request): JsonResponse
     {
         $startStation = $request->input('start_station');

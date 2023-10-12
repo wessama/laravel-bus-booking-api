@@ -15,9 +15,18 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Knuckles\Scribe\Attributes\Authenticated;
+use Knuckles\Scribe\Attributes\Group;
 
+#[Group("Booking Management", "APIs for managing bookings")]
 class BookingController extends Controller
 {
+    /**
+     * Place a Booking
+     *
+     * This endpoint allows you to place a booking.
+     */
+    #[Authenticated]
     public function store(StoreBookingRequest $request)
     {
         $validatedData = $request->validated();

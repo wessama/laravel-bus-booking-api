@@ -6,7 +6,11 @@ use App\Rules\SeatIsAvailable;
 use App\Rules\ValidSeatForTrip;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Knuckles\Scribe\Attributes\BodyParam;
 
+#[BodyParam("seat_id", "int", "The seat to be booked.")]
+#[BodyParam("start_station", "int", "Where the user's trip will start.")]
+#[BodyParam("end_station", "int", "Where the user's trip will end.")]
 class StoreBookingRequest extends FormRequest
 {
     /**

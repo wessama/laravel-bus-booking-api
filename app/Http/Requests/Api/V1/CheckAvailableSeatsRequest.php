@@ -4,7 +4,10 @@ namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Knuckles\Scribe\Attributes\BodyParam;
 
+#[BodyParam("start_station", "int", "Where the user's trip will start.")]
+#[BodyParam("end_station", "int", "Where the user's trip will end.")]
 class CheckAvailableSeatsRequest extends FormRequest
 {
     /**
