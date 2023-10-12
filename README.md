@@ -12,7 +12,7 @@ For example:
 
 Each branch will have a corresponding PR that you can review for code changes done at that point during development progress.
 
-For code styling and ensuring consistency across the codebase, [Laravel Pint](https://laravelshift.com/) is utilized.
+For code styling and ensuring consistency across the codebase, [Laravel Pint](https://laravel.com/docs/10.x/pint) is utilized.
 See [pint.json](pint.json) for the configuration used.
 
 ## Installation
@@ -31,12 +31,88 @@ See [pint.json](pint.json) for the configuration used.
 6. `php artisan db:seed`. Since it was requested to provide a DB dump, you can elect to skip this step.
 7. `php artisan serve` or use your preferred web server. This project was built using Valet.
 
+### Usage
+
+1. Obtain an access token by sending a `POST` request to `/api/v1/auth/login` with the following payload (if you ran the seeder, then you can pull an e-mail out of the `users` table, otherwise there's a user already provided in the database dump)
+    ```json
+    {
+        "email": "test-user@robusta.com", 
+        "password": "password"
+    }
+    ```
+2. Use the access token to make requests to the API. You can use the `Authorization` header with the value `Bearer <access_token>`.
+3. You can get a list of available seats from point A to point B by sending a `POST` request to `/api/v1/seats/available` with the following payload (refer to the `trip_stations` table for the station IDs):
+    ```json
+    {
+        "start_station_id": 1,
+        "end_station_id": 2
+    }
+    ```
+4. Send a `POST` request to `/api/v1/bookings` to create a booking. The payload should be in the following format:
+    ```json
+    {
+        "seat_id": 1,
+        "start_station_id": 1,
+        "end_station_id": 2
+    }
+    ```
+
 ## API Documentation
 
 To generate API documentation, run `php artisan scribe:generate`. You can then visit `http://localhost/docs` to view the documentation with a "Try it out" button to directly test 
-any of the APIs.
+any of the APIs. Or just use the provided Postman collection.
+
+![API Documentation](docs.png)
 
 ## How it works
+
+```plaintext
+                                   +--------------------------------+
+                                   |    User selects start and end  |
+                                   |    stations for booking.       |
+                                   +--------------------------------+
+                                             |
+                                             |
+                                             V
++------------+  No   +----------------------------------------------------------+
+|            |<------|   Does the selected seat have any existing bookings?     |
+|  Seat is   |       +----------------------------------------------------------+
+| available  |                  |
+| for entire |                  | Yes
+|   trip     |                  V
++------------+     +----------------------------------------------------------+
+                   |   For each existing booking of the selected seat:        |
+                   +----------------------------------------------------------+
+                                 |
+                                 |          
+              +------------------|-----------------------+
+              |                  |                       |
+              V                  V                       |
+    +-------------------+  +--------------+   No  +-------------+
+    | Does the existing |  | Overlapping  |<------| Does the    |
+    |  booking's start  |  | booking is   |       | existing    |
+    |  station fall     |  | found! Seat  |       | booking's   |
+    |  between the user |  | is not       |       | end         |
+    |'s selected start  |  | available.   |       | station     |
+    |   and end station?|  +--------------+       | fall        |
+    +-------------------+                         | between     |
+            | Yes                                 | the user's  |
+            |                                     | selected    |
+            |                                     | start and   |
+            |                                     | end station?|
+            |                                     +-------------+
+            |                                            | Yes
+            V                                            V
+    +--------------+                              +--------------+
+    | Overlapping  |                              | Overlapping  |
+    | booking is   |                              | booking is   |
+    | found! Seat  |                              | found! Seat  |
+    | is not       |                              | is not       |
+    | available.   |                              | available.   |
+    +--------------+                              +--------------+
+```
+
+The app's core functionality revolves around booking bus seats for trips between stations.
 
 The app exposes 2 main APIs:
 - `POST /api/v1/bookings` - to create a booking
@@ -64,7 +140,7 @@ This becomes complicated because one seat might be booked for a segment of the t
 
 #### Overlapping Check:
 
-- For a seat to be available, it should not have an overlapping booking. The overlap is checked by:
+- For a seat to be available, it should not have an overlapping booking.
 - Existing booking's start station is between the user's start and end station.
 - Existing booking's end station is between the user's start and end station.
 
@@ -72,16 +148,16 @@ Here's the basic pseudocode to describe how this check is performed:
     
 ```
 FUNCTION isBookingOverlapping(booking, trip, startStation, endStation)
-FIND order for startStation in trip (startOrder)
-FIND order for endStation in trip (endOrder)
-FIND order for booking's start station in trip (bookedStartOrder)
-FIND order for booking's end station in trip (bookedEndOrder)
+    FIND order for startStation in trip (startOrder)
+    FIND order for endStation in trip (endOrder)
+    FIND order for booking's start station in trip (bookedStartOrder)
+    FIND order for booking's end station in trip (bookedEndOrder)
 
-IF bookedEndOrder <= startOrder OR bookedStartOrder >= endOrder
-RETURN false
-ELSE
-RETURN true
-END IF
+    IF bookedEndOrder <= startOrder OR bookedStartOrder >= endOrder
+        RETURN false
+    ELSE
+        RETURN true
+    END IF
 END FUNCTION
 ```
 
@@ -90,4 +166,4 @@ END FUNCTION
 `composer test`
 
 ## Credits
-- Wessam Ahmed
+- [Wessam Ahmed](mailto:wessam.ah@outlook.com)
