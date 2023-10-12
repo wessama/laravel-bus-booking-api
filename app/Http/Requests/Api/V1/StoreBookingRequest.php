@@ -33,7 +33,7 @@ class StoreBookingRequest extends FormRequest
                 'required',
                 'exists:seats,id',
                 new ValidSeatForTrip($this->input('start_station'), $this->input('end_station')),
-                new SeatIsAvailable($this->input('start_station'), $this->input('end_station')),
+                // new SeatIsAvailable($this->input('start_station'), $this->input('end_station')),
             ],
             'start_station' => 'required|exists:stations,id',
             'end_station' => 'required|exists:stations,id'
