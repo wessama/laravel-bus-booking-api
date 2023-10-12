@@ -22,7 +22,9 @@ See [pint.json](pint.json) for the configuration used.
 - Composer
 - MySQL 8.0
 
-### Steps
+### Installation
+
+#### Local
 1. Clone the repository
 2. Run `composer install`
 3. Create a copy of `.env.example` and rename it to `.env`. Add your database credentials.
@@ -30,6 +32,28 @@ See [pint.json](pint.json) for the configuration used.
 5. `php artisan migrate`
 6. `php artisan db:seed`. Since it was requested to provide a DB dump, you can elect to skip this step.
 7. `php artisan serve` or use your preferred web server. This project was built using Valet.
+
+#### Docker
+
+> Not preferable, I didn't have enough time to work on the Docker setup, so it's not fully functional. But you can still use it.
+
+Run `docker-compose up -d --build` to build the containers and start the services. The app will be available at `http://localhost:8080`.
+
+Make sure to edit `.env` to add the container's DB host.
+
+```plaintext
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=laravel_user
+DB_PASSWORD=secret
+```
+To run the tests inside the container:
+
+```bash
+docker-compose exec app php artisan test
+```
 
 ### Usage
 
