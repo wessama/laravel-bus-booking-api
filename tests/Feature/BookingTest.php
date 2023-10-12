@@ -9,13 +9,14 @@ use App\Models\Station;
 use App\Models\Trip;
 use App\Models\TripStation;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class BookingTest extends TestCase
 {
-    use WithFaker;
+    use RefreshDatabase, WithFaker;
 
     protected Bus $bus;
     protected User $user;
