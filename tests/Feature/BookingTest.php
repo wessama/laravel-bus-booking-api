@@ -19,20 +19,25 @@ class BookingTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     protected Bus $bus;
+
     protected User $user;
+
     protected Seat $seat;
-    protected Station$startStation;
+
+    protected Station $startStation;
+
     protected Station $endStation;
+
     protected Trip $trip;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         parent::setUp();
 
         $this->bus = Bus::factory()->create();
         $this->user = User::factory()->create();
         $this->seat = Seat::factory()->for($this->bus)->create([
-            'seat_number' => $this->faker->randomNumber()
+            'seat_number' => $this->faker->randomNumber(),
         ]);
         $this->startStation = Station::factory()->create();
         $this->endStation = Station::factory()->create();
@@ -42,11 +47,11 @@ class BookingTest extends TestCase
 
         TripStation::factory()->for($this->trip)->create([
             'station_id' => $this->startStation->id,
-            'order' => 1
+            'order' => 1,
         ]);
         TripStation::factory()->for($this->trip)->create([
             'station_id' => $this->endStation->id,
-            'order' => 3
+            'order' => 3,
         ]);
     }
 
@@ -96,7 +101,7 @@ class BookingTest extends TestCase
         $overlappingStartStation = Station::factory()->create();
         TripStation::factory()->for($this->trip)->create([
             'station_id' => $overlappingStartStation->id,
-            'order' => 2  // between start and end
+            'order' => 2,  // between start and end
         ]);
 
         Sanctum::actingAs($this->user);
@@ -112,7 +117,7 @@ class BookingTest extends TestCase
         $response->assertStatus(422);
     }
 
-    protected function assertBookingExists($user, $seat, $startStation, $endStation): void
+    protected function assertBookingExists($user, $seat, $startStation, $endStation) : void
     {
         $this->assertDatabaseHas('bookings', [
             'user_id' => $user->id,

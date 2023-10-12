@@ -12,6 +12,7 @@ class SeatIsAvailable implements ValidationRule
     use ChecksForAvailableSeats;
 
     protected ?int $startStation;
+
     protected ?int $endStation;
 
     public function __construct(?int $startStation, ?int $endStation)
@@ -19,12 +20,13 @@ class SeatIsAvailable implements ValidationRule
         $this->startStation = $startStation;
         $this->endStation = $endStation;
     }
+
     /**
      * Run the validation rule.
      *
      * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      */
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+    public function validate(string $attribute, mixed $value, Closure $fail) : void
     {
         $tripStations = TripStation::tripSegments($this->startStation, $this->endStation)->get();
 

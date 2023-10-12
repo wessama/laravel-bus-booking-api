@@ -6,11 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreBookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Models\Booking;
-use App\Models\Seat;
-use App\Models\Trip;
-use App\Models\TripStation;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Knuckles\Scribe\Attributes\Authenticated;
 use Knuckles\Scribe\Attributes\Group;
 
-#[Group("Booking Management", "APIs for managing bookings")]
+#[Group('Booking Management', 'APIs for managing bookings')]
 class BookingController extends Controller
 {
     /**
@@ -58,4 +54,3 @@ class BookingController extends Controller
         return new BookingResource($booking);
     }
 }
-

@@ -6,20 +6,15 @@ use App\Http\Controllers\Api\V1\Traits\ChecksForAvailableSeats;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CheckAvailableSeatsRequest;
 use App\Http\Resources\SeatResource;
-use App\Models\Booking;
-use App\Models\Seat;
 use App\Models\Station;
 use App\Models\Trip;
 use App\Models\TripStation;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Knuckles\Scribe\Attributes\Authenticated;
 use Knuckles\Scribe\Attributes\Group;
 
-#[Group("Seat Management", "APIs for managing seats")]
+#[Group('Seat Management', 'APIs for managing seats')]
 class SeatController extends Controller
 {
     use ChecksForAvailableSeats;
@@ -30,7 +25,7 @@ class SeatController extends Controller
      * This endpoint allows you to get all available seats for a trip.
      */
     #[Authenticated]
-    public function available(CheckAvailableSeatsRequest $request): JsonResponse
+    public function available(CheckAvailableSeatsRequest $request) : JsonResponse
     {
         $startStation = Station::find($request->input('start_station'));
         $endStation = Station::find($request->input('end_station'));
@@ -53,7 +48,7 @@ class SeatController extends Controller
         }
 
         return response()->json([
-            'error' => 'No available seats'
+            'error' => 'No available seats',
         ], Response::HTTP_NOT_FOUND);
     }
 }

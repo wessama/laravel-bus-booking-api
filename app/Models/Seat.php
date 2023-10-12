@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 
 class Seat extends BaseModel
 {
@@ -22,7 +20,7 @@ class Seat extends BaseModel
     public function scopeAvailableBetweenTripSegments($query, $startOrder, $endOrder)
     {
         return $query->whereDoesntHave('bookings', function ($query) use ($startOrder, $endOrder) {
-            $query->whereHas('seat.bus.trip', function($tripQuery) use ($startOrder, $endOrder) {
+            $query->whereHas('seat.bus.trip', function ($tripQuery) use ($startOrder, $endOrder) {
                 $tripQuery->whereHas('tripStations', function ($innerQuery) use ($endOrder) {
                     $innerQuery->where('order', '<', $endOrder)
                         ->whereColumn('trip_stations.station_id', 'bookings.start_station_id');
@@ -34,12 +32,12 @@ class Seat extends BaseModel
         });
     }
 
-    public function bus(): BelongsTo
+    public function bus() : BelongsTo
     {
         return $this->belongsTo(Bus::class);
     }
 
-    public function bookings(): HasMany
+    public function bookings() : HasMany
     {
         return $this->hasMany(Booking::class);
     }

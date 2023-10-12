@@ -13,7 +13,7 @@ class BusFactory extends Factory
 {
     protected $model = Bus::class;
 
-    public function definition(): array
+    public function definition() : array
     {
         return [
             // 'trip_id' => Trip::factory(),

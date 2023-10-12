@@ -11,6 +11,7 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 class ValidSeatForTrip implements ValidationRule
 {
     protected ?int $startStation;
+
     protected ?int $endStation;
 
     public function __construct(?int $startStation, ?int $endStation)
@@ -22,14 +23,15 @@ class ValidSeatForTrip implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param Closure(string): PotentiallyTranslatedString $fail
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
      */
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+    public function validate(string $attribute, mixed $value, Closure $fail) : void
     {
         $seat = Seat::with('bus.trip')->find($value);
 
-        if (! $seat || !$seat->bus || !$seat->bus->trip) {
+        if (! $seat || ! $seat->bus || ! $seat->bus->trip) {
             $fail('Seat is not valid.');
+
             return;
         }
 

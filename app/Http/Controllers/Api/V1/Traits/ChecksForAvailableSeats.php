@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 trait ChecksForAvailableSeats
 {
-    public function getAvailableSeats($startStationId, $endStationId, $tripId): Collection
+    public function getAvailableSeats($startStationId, $endStationId, $tripId) : Collection
     {
         $startOrder = TripStation::intermediaryTrip($startStationId, $tripId)->first()?->order;
         $endOrder = TripStation::intermediaryTrip($endStationId, $tripId)->first()?->order;

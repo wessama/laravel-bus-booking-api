@@ -12,7 +12,7 @@ class StationFactory extends Factory
 {
     protected $model = Station::class;
 
-    public function definition(): array
+    public function definition() : array
     {
         return [
             'name' => $this->faker->city,

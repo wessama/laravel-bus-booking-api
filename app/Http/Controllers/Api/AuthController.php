@@ -11,7 +11,7 @@ use Knuckles\Scribe\Attributes\Authenticated;
 use Knuckles\Scribe\Attributes\BodyParam;
 use Knuckles\Scribe\Attributes\Group;
 
-#[Group("Authentication", "APIs for authenticating users")]
+#[Group('Authentication', 'APIs for authenticating users')]
 class AuthController extends Controller
 {
     /**
@@ -31,11 +31,11 @@ class AuthController extends Controller
 
             return response()->json([
                 'token' => $token->plainTextToken,
-                'expires_at' => $token->accessToken->expires_at
+                'expires_at' => $token->accessToken->expires_at,
             ], Response::HTTP_OK);
         } else {
             return response()->json([
-                'error' => 'Unauthorized'
+                'error' => 'Unauthorized',
             ], Response::HTTP_UNAUTHORIZED);
         }
     }
@@ -49,6 +49,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
+
         return response()->json(['message' => 'Logged out']);
     }
 }
