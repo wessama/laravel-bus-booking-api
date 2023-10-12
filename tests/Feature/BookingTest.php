@@ -17,12 +17,12 @@ class BookingTest extends TestCase
 {
     use WithFaker;
 
-    protected $bus;
-    protected $user;
-    protected $seat;
-    protected $startStation;
-    protected $endStation;
-    protected $trip;
+    protected Bus $bus;
+    protected User $user;
+    protected Seat $seat;
+    protected Station$startStation;
+    protected Station $endStation;
+    protected Trip $trip;
 
     protected function setUp(): void
     {
