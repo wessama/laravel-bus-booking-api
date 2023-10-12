@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Knuckles\Scribe\Attributes\Authenticated;
+use Knuckles\Scribe\Attributes\BodyParam;
 use Knuckles\Scribe\Attributes\Group;
 
 #[Group("Authentication", "APIs for authenticating users")]
@@ -18,6 +19,8 @@ class AuthController extends Controller
      *
      * This endpoint allows you to obtain a token for an existing user.
      */
+    #[BodyParam('email', description: 'The email of the user')]
+    #[BodyParam('password', description: 'The password of the user')]
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
