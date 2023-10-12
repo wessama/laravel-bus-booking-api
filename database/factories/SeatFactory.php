@@ -20,7 +20,7 @@ class SeatFactory extends Factory
         ];
     }
 
-    public function withBus(Bus $bus, int $seatNumber): SeatFactory|Factory
+    public function withBus(Bus $bus, int $seatNumber): SeatFactory
     {
         return $this->state(function () use ($bus, $seatNumber) {
             return [

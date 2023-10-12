@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('buses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('trip_id')->constrained();
+            $table->unsignedBigInteger('trip_id')->nullable();
+            $table->foreign('trip_id')->references('id')->on('trips')->onDelete('set null');
             $table->timestamps();
         });
     }

@@ -23,7 +23,7 @@ Route::post('/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout
 
 Route::prefix('v1')->middleware(['api', 'auth:sanctum'])->group(function () {
     Route::get('/trips', [\App\Http\Controllers\Api\V1\TripController::class, 'index']);
-    Route::get('/seats/available', [\App\Http\Controllers\Api\V1\SeatController::class, 'index']);
+    Route::post('/seats/available', [\App\Http\Controllers\Api\V1\SeatController::class, 'available']);
     Route::post('/bookings', [\App\Http\Controllers\Api\V1\BookingController::class, 'store']);
     Route::get('/bookings', [\App\Http\Controllers\Api\V1\BookingController::class, 'index']);
 });

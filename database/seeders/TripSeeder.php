@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Bus;
 use App\Models\Station;
 use App\Models\Trip;
 use App\Models\TripStation;
@@ -17,7 +18,11 @@ class TripSeeder extends Seeder
     {
         $stations = Station::all();
 
-        Trip::factory(5)->create()->each(function ($trip) use ($stations) {
+        $buses = Bus::all();
+
+        foreach ($buses as $bus) {
+            $trip = Trip::factory()->create();
+
             $selectedStations = $stations->random(4)->pluck('id');
             foreach ($selectedStations as $order => $station_id) {
                 TripStation::create([
@@ -26,6 +31,8 @@ class TripSeeder extends Seeder
                     'order' => $order + 1,
                 ]);
             }
-        });
+
+            $bus->trip()->associate($trip)->save();
+        }
     }
 }
