@@ -33,7 +33,7 @@ See [pint.json](pint.json) for the configuration used.
 
 ### Usage
 
-1. Obtain an access token by sending a `POST` request to `/api/v1/auth/login` with the following payload (if you ran the seeder, then you can pull an e-mail out of the `users` table, otherwise there's a user already provided in the database dump)
+1. Obtain an access token by sending a `POST` request to `/api/login` with the following payload (if you ran the seeder, then you can pull an e-mail out of the `users` table, otherwise there's a user already provided in the database dump)
     ```json
     {
         "email": "test-user@robusta.com", 
