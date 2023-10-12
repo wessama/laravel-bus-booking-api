@@ -8,6 +8,7 @@ use App\Http\Requests\Api\V1\CheckAvailableSeatsRequest;
 use App\Http\Resources\SeatResource;
 use App\Models\Booking;
 use App\Models\Seat;
+use App\Models\Station;
 use App\Models\Trip;
 use App\Models\TripStation;
 use Illuminate\Http\JsonResponse;
@@ -31,19 +32,22 @@ class SeatController extends Controller
     #[Authenticated]
     public function available(CheckAvailableSeatsRequest $request): JsonResponse
     {
-        $startStation = $request->input('start_station');
-        $endStation = $request->input('end_station');
+        $startStation = Station::find($request->input('start_station'));
+        $endStation = Station::find($request->input('end_station'));
 
         $tripStations = TripStation::with('trip')
-            ->tripSegments($startStation, $endStation)
+            ->tripSegments($startStation->id, $endStation->id)
             ->get();
 
         foreach ($tripStations as $tripSegment) {
-            $availableSeats = $this->getAvailableSeats($startStation, $endStation, $tripSegment->trip_id);
+            $availableSeats = $this->getAvailableSeats($startStation->id, $endStation->id, $tripSegment->trip_id);
 
             if ($availableSeats->isNotEmpty()) {
                 return response()->json([
-                    'data' => SeatResource::collection($availableSeats),
+                    'data' => [
+                        'trip' => $startStation->name . ' to ' . $endStation->name,
+                        'available_seats' => SeatResource::collection($availableSeats)->resolve(),
+                    ],
                 ], Response::HTTP_OK);
             }
         }

@@ -16,7 +16,7 @@ class BusResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'trip' => new TripResource($this->whenLoaded('trip')),
+            'route' => new TripResource($this->whenLoaded('trip')),
         ];
     }
 }
